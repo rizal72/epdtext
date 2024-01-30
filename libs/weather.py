@@ -33,6 +33,8 @@ class Weather(threading.Thread):
     weather = None
     refresh_interval: int = WEATHER_REFRESH
     loop = asyncio.get_event_loop()
+    # loop = asyncio.new_event_loop()
+    # asyncio.set_event_loop(loop)
     thread_lock = threading.Lock()
 
     def __init__(self):
@@ -67,8 +69,12 @@ class Weather(threading.Thread):
         :return: None
         add locale=python_weather.Locale.ITALIAN if needed
         """
-        async with python_weather.Client(unit=WEATHER_FORMAT) as client:
-            self.weather = await client.get(WEATHER_CITY)
+        logger.debug('weather update CALLED!')
+        self.thread_lock.acquire()
+        client = python_weather.Client(unit=WEATHER_FORMAT)
+        self.weather = await client.get(WEATHER_CITY)
+        await client.close()
+        self.thread_lock.release()
 
     def get_temperature(self):
         """
@@ -79,16 +85,6 @@ class Weather(threading.Thread):
             return "--"
 
         return self.weather.current.temperature
-
-    def get_sky_code(self):
-        """
-        Get the sky code
-        :return: String of the sky code
-        """
-        if not self.weather:
-            return 0
-
-        return self.weather.current.sky_code
 
     def get_sky_text(self):
         """
@@ -142,7 +138,7 @@ def get_weather():
     Get the main weather object
     :return: Weather
     """
-    update_weather()
+    # update_weather()
     return weather
 
 
@@ -151,7 +147,6 @@ def update_weather():
     Update the weather info
     :return: None
     """
-    # asyncio.run(weather.update())
     loop = asyncio.get_event_loop()
     loop.run_until_complete(weather.update())
 

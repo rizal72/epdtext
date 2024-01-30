@@ -6,6 +6,7 @@ from screens import AbstractScreen
 
 class Screen(AbstractScreen):
 
+    update_weather()
     weather: Weather = get_weather()
 
     def handle_btn_press(self, button_number: int = 1):
@@ -44,6 +45,5 @@ class Screen(AbstractScreen):
             text = str(self.weather.get_location_name())
             self.centered_text(text, 140, 25)
 
-            # logging.debug("Sky Code: " + str(self.weather.get_sky_code()))
         else:
             self.centered_text("No data", 105, 30)
