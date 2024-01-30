@@ -1,3 +1,5 @@
 *.pyc
 /local_settings.py
 /.cache
+/weather_test.py
+/libs/weather_OLD.py
