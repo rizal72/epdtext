@@ -65,12 +65,10 @@ class Weather(threading.Thread):
         """
         Update the weather info
         :return: None
+        add locale=python_weather.Locale.ITALIAN if needed
         """
-        self.thread_lock.acquire()
-        client = python_weather.Client(format=WEATHER_FORMAT)
-        self.weather = await client.find(WEATHER_CITY)
-        await client.close()
-        self.thread_lock.release()
+        async with python_weather.Client(unit=WEATHER_FORMAT) as client:
+            self.weather = await client.get(WEATHER_CITY)
 
     def get_temperature(self):
         """
@@ -100,7 +98,7 @@ class Weather(threading.Thread):
         if not self.weather:
             return "--"
 
-        return self.weather.current.sky_text
+        return self.weather.current.description
 
     def get_location_name(self):
         """
@@ -110,7 +108,7 @@ class Weather(threading.Thread):
         if not self.weather:
             return "--"
 
-        return self.weather.location_name
+        return self.weather.nearest_area.name
 
     def get_icon(self):
         """
@@ -118,27 +116,9 @@ class Weather(threading.Thread):
         :return: Image of the icon
         """
         if not self.weather:
-            return Image.open("images/sun.png")
+            return "-"
 
-        if self.weather.current.sky_code == 0:
-            image = Image.open("images/sun.png")
-            return image.resize((32, 32))
-        elif self.weather.current.sky_code == 26:
-            image = Image.open("images/cloud.png")
-            return image.resize((32, 32))
-        elif self.weather.current.sky_code == 28:
-            image = Image.open("images/cloud.png")
-            return image.resize((32, 32))
-        elif self.weather.current.sky_code == 30:
-            image = Image.open("images/cloud_sun.png")
-            return image.resize((32, 32))
-        elif self.weather.current.sky_code == 32:
-            image = Image.open("images/sun.png")
-            return image.resize((32, 32))
-        else:
-            logger.warning("Unable to find icon for sky code: {}".format(self.weather.current.sky_code))
-            image = Image.open("images/sun.png")
-            return image.resize((32, 32))
+        return self.weather.current.kind.emoji
 
 
 weather: Weather = Weather()
@@ -149,6 +129,7 @@ def get_weather():
     Get the main weather object
     :return: Weather
     """
+    update_weather()
     return weather
 
 
@@ -157,6 +138,7 @@ def update_weather():
     Update the weather info
     :return: None
     """
+    # asyncio.run(weather.update())
     loop = asyncio.get_event_loop()
     loop.run_until_complete(weather.update())
 
@@ -164,4 +146,4 @@ def update_weather():
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     update_weather()
-    logger.info(weather.weather.current.sky_text)
+    logger.info(weather.weather.current.description)

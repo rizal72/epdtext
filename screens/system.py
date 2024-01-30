@@ -30,7 +30,7 @@ class Screen(AbstractScreen):
 
         string += 'OS:       ' + self.system.dist + '\n'
 
-        string += 'Local IP: ' + self.system.local_ipv4_address + '\n'
+        string += 'Local IP: ' + str(self.system.local_ipv4_address) + '\n'
         string += 'Node:     ' + self.system.node + '\n'
 
         string += 'CPU Temp: ' + str(round(self.system.temperature)) + '°\n'

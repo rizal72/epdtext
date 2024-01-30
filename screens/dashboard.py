@@ -15,7 +15,7 @@ class Screen(AbstractScreen):
         self.draw_titlebar("Dashboard")
 
         logo = self.weather.get_icon()
-        self.image.paste(logo, (15, 30))
+        self.text(logo, font_size=50, position=(15, 17))
 
         text = str(self.weather.get_temperature()) + '°'
         self.text(text, font_size=35, position=(60, 25))
