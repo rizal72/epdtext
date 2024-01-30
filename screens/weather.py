@@ -29,17 +29,20 @@ class Screen(AbstractScreen):
         self.draw_titlebar("Weather")
 
         if self.weather.weather:
-            logo = self.weather.get_icon()
-            self.text(logo, font_size=60, position=(40, 40))
+            icon = self.weather.get_icon()
+            self.text(icon, font_size=60, position=(15, 40))
             
             text = str(self.weather.get_temperature()) + '°'
             self.centered_text(text, 40, 60)
 
             text = str(self.weather.get_sky_text())
-            self.centered_text(text, 105, 30)
+            self.centered_text(text, 105, 20)
+
+            moon = self.weather.get_moon()
+            self.text(moon, font_size=50, position=(190, 46))
 
             text = str(self.weather.get_location_name())
-            self.centered_text(text, 140, 20)
+            self.centered_text(text, 140, 25)
 
             # logging.debug("Sky Code: " + str(self.weather.get_sky_code()))
         else:

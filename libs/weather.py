@@ -113,12 +113,25 @@ class Weather(threading.Thread):
     def get_icon(self):
         """
         Get the icon for the current weather
-        :return: Image of the icon
+        :return: emoji str
         """
         if not self.weather:
             return "-"
 
         return self.weather.current.kind.emoji
+    
+    def get_moon(self):
+        """
+        Get the moon phase for the current weather
+        :return: emoji str
+        """
+        if not self.weather:
+            return "-"
+
+        for forecast in self.weather.forecasts:
+            moon = forecast.astronomy.moon_phase.emoji
+            break
+        return moon
 
 
 weather: Weather = Weather()

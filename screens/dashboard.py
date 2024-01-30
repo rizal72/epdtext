@@ -14,14 +14,14 @@ class Screen(AbstractScreen):
         self.blank()
         self.draw_titlebar("Dashboard")
 
-        logo = self.weather.get_icon()
-        self.text(logo, font_size=50, position=(15, 17))
+        icon = self.weather.get_icon()
+        self.text(icon, font_size=50, position=(15, 17))
 
         text = str(self.weather.get_temperature()) + '°'
         self.text(text, font_size=35, position=(60, 25))
 
         text = str(self.weather.get_sky_text())
-        self.text(text, font_size=14, position=(150, 35))
+        self.text(text, font_size=20, position=(136, 32))
 
         self.line((0, 70, self.image.size[0], 70), width=1)
 
