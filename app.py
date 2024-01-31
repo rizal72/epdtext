@@ -12,7 +12,7 @@ import settings
 from libs import epd
 from libs.calendar import Calendar, get_calendar
 from libs.epd import EPD, get_epd
-from libs.weather import Weather, get_weather
+from libs.weather import Weather, get_weather, update_weather
 from settings import TIME, SCREENS, DEBUG, LOGFILE
 
 
@@ -223,7 +223,10 @@ class App:
 
             self.weather.refresh_interval -= 1
             if self.weather.refresh_interval < 1:
-                asyncio.get_event_loop().run_until_complete(self.weather.update())
+                # asyncio.get_event_loop().run_until_complete(self.weather.update())
+                update_weather()
+                self.current_screen().reload()
+                self.current_screen().show()
                 self.weather.refresh_interval = settings.WEATHER_REFRESH
 
             self.current_screen().iterate_loop()
