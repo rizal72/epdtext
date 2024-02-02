@@ -13,12 +13,11 @@ class Screen(AbstractScreen):
         if button_number == 0:
             pass
         elif button_number == 1:
-            self.reload()
-            self.show()
-        elif button_number == 2:
             update_weather()
             self.reload()
             self.show()
+        elif button_number == 2:
+            pass
         elif button_number == 3:
             pass
         else:

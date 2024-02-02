@@ -77,6 +77,7 @@ class Weather(threading.Thread):
         # self.weather = await client.get(WEATHER_CITY)
         # await client.close()
         # self.thread_lock.release()
+        
         async with python_weather.Client(unit=WEATHER_FORMAT) as client:
             self.weather = await client.get(WEATHER_CITY)
             logger.debug('weather update CALLED!')
@@ -89,7 +90,8 @@ class Weather(threading.Thread):
         if not self.weather:
             return "--"
 
-        return self.weather.current.temperature
+        temp = self.weather.current.temperature
+        return temp
 
     def get_sky_text(self):
         """
@@ -99,7 +101,9 @@ class Weather(threading.Thread):
         if not self.weather:
             return "--"
 
-        return self.weather.current.description
+        description = self.weather.current.description
+        print('description = ', description)
+        return description
 
     def get_location_name(self):
         """
@@ -109,7 +113,9 @@ class Weather(threading.Thread):
         if not self.weather:
             return "--"
 
-        return self.weather.nearest_area.name
+        location = self.weather.nearest_area.name
+        print('location = ', location)
+        return location
 
     def get_icon(self):
         """
@@ -119,7 +125,11 @@ class Weather(threading.Thread):
         if not self.weather:
             return "-"
 
-        return self.weather.current.kind.emoji
+        kind = self.weather.current.kind
+        icon = kind.emoji
+        print('kind = ', kind)
+        print('icon = ', icon)
+        return icon
     
     def get_moon(self):
         """

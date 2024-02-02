@@ -114,7 +114,7 @@ class Calendar(threading.Thread):
         """
         try:
             timeline: list = events(url, start=datetime.today(),
-                                    end=datetime.today() + timedelta(days=7))
+                                    end=datetime.today() + timedelta(days=14))
             for event in timeline:
                 start = event.start
                 summary = event.summary

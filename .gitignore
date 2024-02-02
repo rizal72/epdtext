@@ -1,4 +1,6 @@
+e-Paper/
 *.pyc
+.venv
 /local_settings.py
 /.cache
 /weather_test.py
