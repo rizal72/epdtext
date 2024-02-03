@@ -134,6 +134,7 @@ class App:
         self.mq.block = False
 
         self.calendar.get_latest_events()
+        asyncio.run(self.weather.update())
         self.calendar.start()
         self.weather.start()
 
@@ -221,13 +222,13 @@ class App:
 
             time.sleep(1)
 
-            self.weather.refresh_interval -= 1
-            if self.weather.refresh_interval < 1:
-                # asyncio.get_event_loop().run_until_complete(self.weather.update())
-                update_weather()
-                self.current_screen().reload()
-                self.current_screen().show()
-                self.weather.refresh_interval = settings.WEATHER_REFRESH
+            # self.weather.refresh_interval -= 1
+            # if self.weather.refresh_interval < 1:
+            #     # asyncio.get_event_loop().run_until_complete(self.weather.update())
+            #     update_weather()
+            #     self.current_screen().reload()
+            #     self.current_screen().show()
+            #     self.weather.refresh_interval = settings.WEATHER_REFRESH
 
             self.current_screen().iterate_loop()
 

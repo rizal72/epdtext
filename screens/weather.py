@@ -6,7 +6,6 @@ from screens import AbstractScreen
 
 class Screen(AbstractScreen):
 
-    update_weather()
     weather: Weather = get_weather()
 
     def handle_btn_press(self, button_number: int = 1):

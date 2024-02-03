@@ -45,11 +45,11 @@ class Weather(threading.Thread):
 
     def run(self) -> None:
         logger.debug('Weather loop starting...')
-        # thread_process = threading.Thread(target=self.weather_loop)
-        # # run thread as a daemon so it gets cleaned up on exit.
-        # thread_process.daemon = True
-        # thread_process.start()
-        # self.shutdown.wait()
+        thread_process = threading.Thread(target=self.weather_loop)
+        # run thread as a daemon so it gets cleaned up on exit.
+        thread_process.daemon = True
+        thread_process.start()
+        self.shutdown.wait()
 
     def weather_loop(self):
         while not self.shutdown.is_set():
@@ -72,15 +72,16 @@ class Weather(threading.Thread):
         :return: None
         add locale=python_weather.Locale.ITALIAN if needed
         """
-        # self.thread_lock.acquire()
-        # client = python_weather.Client(unit=WEATHER_FORMAT)
-        # self.weather = await client.get(WEATHER_CITY)
-        # await client.close()
-        # self.thread_lock.release()
+        self.thread_lock.acquire()
+        client = python_weather.Client(unit=WEATHER_FORMAT)
+        self.weather = await client.get(WEATHER_CITY)
+        await client.close()
+        self.thread_lock.release()
+
+        # async with python_weather.Client(unit=WEATHER_FORMAT) as client:
+        #     self.weather = await client.get(WEATHER_CITY)
         
-        async with python_weather.Client(unit=WEATHER_FORMAT) as client:
-            self.weather = await client.get(WEATHER_CITY)
-            logger.debug('weather update CALLED!')
+        logger.debug('weather update CALLED!')
 
     def get_temperature(self):
         """
@@ -102,7 +103,7 @@ class Weather(threading.Thread):
             return "--"
 
         description = self.weather.current.description
-        print('description = ', description)
+        # print('description = ', description)
         return description
 
     def get_location_name(self):
@@ -114,7 +115,7 @@ class Weather(threading.Thread):
             return "--"
 
         location = self.weather.nearest_area.name
-        print('location = ', location)
+        # print('location = ', location)
         return location
 
     def get_icon(self):
@@ -127,8 +128,8 @@ class Weather(threading.Thread):
 
         kind = self.weather.current.kind
         icon = kind.emoji
-        print('kind = ', kind)
-        print('icon = ', icon)
+        # print('kind = ', kind)
+        # print('icon = ', icon)
         return icon
     
     def get_moon(self):
@@ -164,10 +165,13 @@ def update_weather():
     """
     # loop = asyncio.get_event_loop()
     # loop.run_until_complete(weather.update())
-    asyncio.run(weather.update())
+    
+    # asyncio.run(weather.update())
+    weather.refresh_interval = 0
 
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
+    print('Weather CLASS instantiated...')
     update_weather()
     logger.info(weather.weather.current.description)
