@@ -128,6 +128,7 @@ class Weather(threading.Thread):
 
         kind = self.weather.current.kind
         icon = kind.emoji
+        # icon = '🌧'
         # print('kind = ', kind)
         # print('icon = ', icon)
         return icon
