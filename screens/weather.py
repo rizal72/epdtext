@@ -30,6 +30,7 @@ class Screen(AbstractScreen):
         if self.weather.weather:
             icon = self.weather.get_icon()
             self.text(icon, font_size=60, position=(15, 38))
+            # self.text(icon, font_name='/home/pi/.local/share/fonts/Noto/NotoColorEmoji-Regular.ttf', font_size=60, position=(15, 38))
             
             text = str(self.weather.get_temperature()) + '°'
             self.centered_text(text, 40, 60)
