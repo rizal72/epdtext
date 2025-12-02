@@ -167,41 +167,16 @@ class Tailscale:
         return has_ipv4_default or has_ipv6_default
 
     @property
-    def active_exit_node_clients(self):
-        """
-        Count how many peers are using this node as their exit node
-        Returns number of active clients
-        """
-        status = self._get_status()
-        if not status:
-            return 0
-
-        peer_status = status.get('Peer', {})
-        self_info = status.get('Self', {})
-        self_id = self_info.get('ID', '')
-
-        count = 0
-        for peer_id, peer_data in peer_status.items():
-            # Check if this peer is using us as exit node
-            exit_node = peer_data.get('ExitNode', '')
-            if exit_node == self_id:
-                count += 1
-
-        return count
-
-    @property
     def exit_node_status(self):
         """
         Get exit node status as a string
-        Returns: "Active", "Inactive", or "Disabled"
+        Returns: "Available" or "Disabled"
+        Note: Tailscale API does not expose which peers are using this node as exit node
         """
-        if not self.is_exit_node_enabled:
+        if self.is_exit_node_enabled:
+            return "Available"
+        else:
             return "Disabled"
-
-        if self.active_exit_node_clients > 0:
-            return "Active"
-
-        return "Inactive"
 
     @property
     def peers_online(self):
@@ -256,5 +231,4 @@ if __name__ == '__main__':
     print(f"Hostname: {ts.hostname}")
     print(f"Exit Node Enabled: {ts.is_exit_node_enabled}")
     print(f"Exit Node Status: {ts.exit_node_status}")
-    print(f"Active Exit Node Clients: {ts.active_exit_node_clients}")
     print(f"Peers Online: {ts.peers_online}")

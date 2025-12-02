@@ -53,11 +53,8 @@ class Screen(AbstractScreen):
 
         # Exit node status
         exit_status = self.tailscale.exit_node_status
-        if exit_status == "Active":
-            clients = self.tailscale.active_exit_node_clients
-            string += f'Exit Node: ✓ Active ({clients})\n'
-        elif exit_status == "Inactive":
-            string += 'Exit Node: ✗ Inactive\n'
+        if exit_status == "Available":
+            string += 'Exit Node: ✓ Available\n'
         else:  # Disabled
             string += 'Exit Node: - Disabled\n'
 
