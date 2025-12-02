@@ -21,7 +21,9 @@ class Screen(AbstractScreen):
             logo = Image.open(LOGO)
         else:
             logo = Image.open(self.system.icon)
-        self.image.paste(logo, (100, 25))
+        # Center logo horizontally
+        logo_x = (self.image.size[0] - logo.size[0]) // 2
+        self.image.paste(logo, (logo_x, 25))
 
         string = self.system.model + '\n'
         self.text(string, font_size=14, font_name=settings.BOLD_FONT, position=(5, 75), wrap=False)

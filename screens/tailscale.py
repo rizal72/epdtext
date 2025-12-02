@@ -24,7 +24,11 @@ class Screen(AbstractScreen):
         # Try to load Tailscale icon
         try:
             icon = Image.open("images/tailscale.png")
-            self.image.paste(icon, (100, 25))
+            # Resize to smaller size for better fit
+            icon = icon.resize((50, 50))
+            # Center horizontally: (width - icon_width) / 2
+            icon_x = (self.image.size[0] - 50) // 2
+            self.image.paste(icon, (icon_x, 30))
         except FileNotFoundError:
             logging.warning("Tailscale icon not found at images/tailscale.png")
 

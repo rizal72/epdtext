@@ -158,12 +158,14 @@ class AbstractScreen:
         :return: None
         """
         font = ImageFont.truetype(font_name, font_size)
-        avg_char_width: int = sum(font.getsize(char)[0] for char in ascii_letters) / len(ascii_letters)
         number_of_lines = 0
         for line in text.split('\n'):
-            centered_position = (self.image.size[0] / 2) - (avg_char_width * len(line) / 2)
+            # Use getbbox for accurate text width calculation
+            bbox = font.getbbox(line)
+            text_width = bbox[2] - bbox[0]
+            centered_position = (self.image.size[0] - text_width) / 2
             position = (centered_position, y + (number_of_lines * font_size))
-            self.text(text, font_size=font_size, font_name=font_name, position=position, wrap=False)
+            self.text(line, font_size=font_size, font_name=font_name, position=position, wrap=False)
             number_of_lines += 1
 
         return number_of_lines
