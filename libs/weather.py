@@ -132,7 +132,99 @@ class Weather(threading.Thread):
         # print('kind = ', kind)
         # print('icon = ', icon)
         return icon
-    
+
+    def get_icon_image(self, size=50):
+        """
+        Get the icon image for the current weather by converting emoji to PNG
+        :param size: Size of the icon in pixels (default 50)
+        :return: PIL Image or None
+        """
+        if not self.weather:
+            return None
+
+        try:
+            from pilmoji import Pilmoji
+            from PIL import ImageDraw, ImageFont
+
+            # Get the emoji
+            emoji = self.get_icon()
+            if not emoji or emoji == "-":
+                return None
+
+            # Create a blank image for the emoji
+            img = Image.new('1', (size, size), 1)  # 1-bit image, white background
+
+            # Use Pilmoji to render the emoji
+            with Pilmoji(img) as pilmoji:
+                # Try to render the emoji centered
+                # Pilmoji needs a font for text context
+                try:
+                    font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', size)
+                except:
+                    font = ImageFont.load_default()
+
+                # Draw the emoji
+                pilmoji.text((0, 0), emoji, font=font, fill=0)  # 0 = black
+
+            return img
+
+        except Exception as e:
+            logger.error(f"Could not render emoji icon: {e}")
+            # Fallback to PNG icons if emoji rendering fails
+            return self._get_fallback_icon()
+
+    def _get_fallback_icon(self):
+        """
+        Fallback to basic PNG icons if emoji rendering fails
+        :return: PIL Image or None
+        """
+        if not self.weather:
+            return None
+
+        kind = self.weather.current.kind
+        kind_name = str(kind).lower()
+
+        # Map weather kinds to icon files (order matters - more specific first)
+        icon_map = {
+            'thunderstorm': 'images/thunderstorm.png',
+            'thunder': 'images/thunderstorm.png',
+            'storm': 'images/thunderstorm.png',
+            'drizzle': 'images/drizzle.png',
+            'rain': 'images/rain.png',
+            'rainy': 'images/rain.png',
+            'shower': 'images/rain.png',
+            'snow': 'images/snow.png',
+            'snowy': 'images/snow.png',
+            'sleet': 'images/snow.png',
+            'fog': 'images/fog.png',
+            'foggy': 'images/fog.png',
+            'mist': 'images/fog.png',
+            'haze': 'images/fog.png',
+            'sunny': 'images/sun.png',
+            'clear': 'images/sun.png',
+            'partly_cloudy': 'images/cloud_sun.png',
+            'partly': 'images/cloud_sun.png',
+            'cloudy': 'images/cloud.png',
+            'overcast': 'images/cloud.png',
+        }
+
+        # Find matching icon
+        icon_path = None
+        for key, path in icon_map.items():
+            if key in kind_name:
+                icon_path = path
+                break
+
+        # Default to cloud if no match
+        if not icon_path:
+            icon_path = 'images/cloud.png'
+
+        try:
+            return Image.open(icon_path)
+        except Exception as e:
+            logger.error(f"Could not load weather icon {icon_path}: {e}")
+            return None
+
     def get_moon(self):
         """
         Get the moon phase for the current weather

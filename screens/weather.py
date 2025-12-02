@@ -28,18 +28,20 @@ class Screen(AbstractScreen):
         self.draw_titlebar("Weather")
 
         if self.weather.weather:
-            icon = self.weather.get_icon()
-            self.text(icon, font_size=60, position=(15, 38))
-            # self.text(icon, font_name='/home/pi/.local/share/fonts/Noto/NotoColorEmoji-Regular.ttf', font_size=60, position=(15, 38))
-            
+            # Use PNG icon instead of emoji
+            icon_image = self.weather.get_icon_image()
+            if icon_image:
+                self.image.paste(icon_image, (15, 38))
+
             text = str(self.weather.get_temperature()) + '°'
             self.centered_text(text, 40, 60)
 
             text = str(self.weather.get_sky_text())
             self.centered_text(text, 105, 20)
 
-            moon = self.weather.get_moon()
-            self.text(moon, font_size=50, position=(190, 46))
+            # Moon emoji removed - could add moon icon later if needed
+            # moon = self.weather.get_moon()
+            # self.text(moon, font_size=50, position=(190, 46))
 
             text = str(self.weather.get_location_name())
             self.centered_text(text, 140, 25)

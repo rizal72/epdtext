@@ -1,7 +1,13 @@
 e-Paper/
 *.pyc
 .venv
+.vscode
 /local_settings.py
 /.cache
 /weather_test.py
 /libs/weather_OLD.py
+
+# Claude Code files
+.claude/
+CLAUDE.md
+._*

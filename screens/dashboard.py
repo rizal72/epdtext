@@ -14,8 +14,12 @@ class Screen(AbstractScreen):
         self.blank()
         self.draw_titlebar("Dashboard")
 
-        icon = self.weather.get_icon()
-        self.text(icon, font_size=50, position=(15, 17))
+        # Use PNG icon instead of emoji (smaller size for dashboard)
+        icon_image = self.weather.get_icon_image(size=40)
+        if icon_image:
+            # Resize to fit better in dashboard layout
+            icon_image = icon_image.resize((35, 35))
+            self.image.paste(icon_image, (15, 28))
 
         text = str(self.weather.get_temperature()) + '°'
         self.text(text, font_size=35, position=(60, 25))
