@@ -46,7 +46,7 @@ class System:
     @property
     def model(self):
         with open('/sys/firmware/devicetree/base/model', 'r') as model_file:
-            return model_file.read()
+            return model_file.read().strip('\x00').strip()
 
     @property
     def system(self):

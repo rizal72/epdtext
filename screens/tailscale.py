@@ -65,6 +65,17 @@ class Screen(AbstractScreen):
         # Draw the status information
         self.text(string, font_size=14, font_name=settings.MONOSPACE_FONT, position=(5, 90), wrap=False)
 
+    def iterate_loop(self):
+        """
+        Called every second by main loop
+        Handles auto-refresh and ensures display is updated
+        """
+        super().iterate_loop()  # This handles reload_wait and calls reload()
+
+        # Check if we just reloaded (reload_wait was reset to 0)
+        if self.reload_wait == 0 and self.image:
+            self.show()  # Update the physical display after reload
+
     def handle_btn_press(self, button_number=1):
         """
         Handle button presses

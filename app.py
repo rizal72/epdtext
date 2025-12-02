@@ -115,6 +115,33 @@ class App:
             self.logger.error("Screen '{0}' not found".format(screen_name))
             return None
 
+    def _show_loading(self, message):
+        """
+        Show a loading message on the display during initialization
+        """
+        from PIL import Image, ImageDraw, ImageFont
+
+        # Create a simple loading screen
+        img = Image.new('1', self.epd.get_size(), 255)  # White background
+        draw = ImageDraw.Draw(img)
+
+        try:
+            font = ImageFont.truetype(settings.FONT, 20)
+        except:
+            font = ImageFont.load_default()
+
+        # Center the text
+        bbox = draw.textbbox((0, 0), message, font=font)
+        text_width = bbox[2] - bbox[0]
+        text_height = bbox[3] - bbox[1]
+        x = (self.epd.get_size()[0] - text_width) // 2
+        y = (self.epd.get_size()[1] - text_height) // 2
+
+        draw.text((x, y), message, font=font, fill=0)  # Black text
+
+        # Show on display
+        self.epd.show(img)
+
     def __init__(self):
         if DEBUG:
             logging.basicConfig(level=logging.DEBUG, filename=LOGFILE)
@@ -130,11 +157,18 @@ class App:
 
         self.epd.start()
 
+        # Show loading message
+        self._show_loading("Initializing...")
+
         self.mq = posix_ipc.MessageQueue("/epdtext_ipc", flags=posix_ipc.O_CREAT)
         self.mq.block = False
 
+        self._show_loading("Loading calendar...")
         self.calendar.get_latest_events()
+
+        self._show_loading("Loading weather...")
         asyncio.run(self.weather.update())
+
         self.calendar.start()
         self.weather.start()
 
@@ -144,6 +178,7 @@ class App:
         btns[2].when_pressed = self.handle_btn2_press
         btns[3].when_pressed = self.handle_btn3_press
 
+        self._show_loading("Loading screens...")
         for module in SCREENS:
             self.add_screen(module)
 
