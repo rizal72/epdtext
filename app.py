@@ -76,7 +76,8 @@ class App:
         try:
             screen_module = importlib.import_module("screens." + screen_name)
         except ImportError as error:
-            self.logger.error(error)
+            # Try loading without 'screens.' prefix before giving up
+            self.logger.debug(f"Failed to import 'screens.{screen_name}', trying '{screen_name}'")
             try:
                 screen_module = importlib.import_module(screen_name)
             except ImportError:
@@ -86,17 +87,20 @@ class App:
                 new_screen = screen_module.Screen()
                 self.screens.append(new_screen)
                 self.screen_modules.append(screen_module)
+                self.logger.info(f"Successfully added screen '{screen_name}'")
             except AttributeError:
                 self.logger.error("Screen '{0}' has no Screen class".format(screen_name))
+            except Exception as e:
+                self.logger.error(f"Failed to initialize screen '{screen_name}': {e}")
         else:
-            self.logger.error("Failed to load app: {}".format(screen_name))
+            self.logger.error("Failed to load screen module: {}".format(screen_name))
 
     def find_screen_index_by_name(self, screen_name):
         for index in range(0, len(self.screens)):
             name = self.screens[index].__module__
             if name == screen_name or name.split('.')[-1] == screen_name:
                 return index
-        self.logger.error("Screen '{0}' doesn't exist".format(screen_name))
+        # Return -1 without logging - let the caller decide if this is an error
         return -1
 
     def get_screen_by_name(self, screen_name):
@@ -104,7 +108,7 @@ class App:
         if index >= 0:
             return self.screens[index]
         else:
-            self.logger.error("Screen '{0}' not found".format(screen_name))
+            self.logger.debug("Screen '{0}' not found".format(screen_name))
             return None
 
     def get_screen_module_by_name(self, screen_name):
@@ -112,7 +116,7 @@ class App:
         if index >= 0:
             return self.screen_modules[index]
         else:
-            self.logger.error("Screen '{0}' not found".format(screen_name))
+            self.logger.debug("Screen '{0}' not found".format(screen_name))
             return None
 
     def _show_loading(self, message):
@@ -236,11 +240,18 @@ class App:
                 self.current_screen().show()
             elif command == "remove_screen":
                 self.logger.debug("Attempting to remove screen '{0}'".format(parts[1]))
-                if self.current_screen_index == self.find_screen_index_by_name(parts[1]):
-                    self.current_screen_index = 0
-                    self.current_screen().reload()
-                self.screens.remove(self.get_screen_by_name(parts[1]))
-                self.screen_modules.remove(self.get_screen_module_by_name(parts[1]))
+                screen_to_remove = self.get_screen_by_name(parts[1])
+                module_to_remove = self.get_screen_module_by_name(parts[1])
+
+                if screen_to_remove and module_to_remove:
+                    if self.current_screen_index == self.find_screen_index_by_name(parts[1]):
+                        self.current_screen_index = 0
+                        self.current_screen().reload()
+                    self.screens.remove(screen_to_remove)
+                    self.screen_modules.remove(module_to_remove)
+                    self.logger.info(f"Successfully removed screen '{parts[1]}'")
+                else:
+                    self.logger.error(f"Cannot remove screen '{parts[1]}': not found")
             elif command == "add_screen":
                 self.logger.debug("Attempting to add screen '{0}'".format(parts[1]))
                 if self.get_screen_by_name(parts[1]):

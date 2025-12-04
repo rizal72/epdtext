@@ -198,6 +198,29 @@ class Tailscale:
         return online_count
 
     @property
+    def peer_names(self):
+        """
+        Get list of online peer hostnames
+        Returns: List of peer hostnames (up to 9)
+        """
+        status = self._get_status()
+        if not status:
+            return []
+
+        peer_status = status.get('Peer', {})
+        peer_list = []
+
+        for peer_id, peer_data in peer_status.items():
+            # Check if peer is online
+            if peer_data.get('Online', False):
+                hostname = peer_data.get('HostName', 'unknown')
+                peer_list.append(hostname)
+
+        # Sort alphabetically and limit to 9
+        peer_list.sort()
+        return peer_list[:9]
+
+    @property
     def backend_state(self):
         """
         Get the backend state string
