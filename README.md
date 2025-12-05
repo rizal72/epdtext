@@ -1,5 +1,24 @@
 # epdtext
 
+> **⚠️ DEPRECATED - Project Merged**
+>
+> This project has been **merged into [paperGate](https://github.com/rizal72/paperGate)**.
+>
+> **paperGate** is a unified monorepo that combines:
+> - `epdtext` - E-paper display daemon
+> - `epdtext-web` - Web control interface
+> - `epdtext-feed` - RSS feed reader
+>
+> **Benefits of paperGate:**
+> - ✅ Single repository for complete system
+> - ✅ Unified configuration (one file for everything)
+> - ✅ Improved architecture and documentation
+> - ✅ Active development and maintenance
+>
+> **Please migrate to:** https://github.com/rizal72/paperGate
+>
+> ---
+
 A simple display manager app for the [WaveShare 2.7in e-Paper HAT](https://www.waveshare.com/2.7inch-e-paper-hat.htm)
 
 ![Picture](/screenshots/picture.jpg)
